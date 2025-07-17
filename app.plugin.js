@@ -1,1 +1,1 @@
-module.exports = require("./build/withBanuba");
+module.exports = require("./plugin/build/withBanuba");
