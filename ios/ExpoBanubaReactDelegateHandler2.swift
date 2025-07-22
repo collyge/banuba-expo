@@ -1,5 +1,7 @@
 import ExpoModulesCore
 import BanubaVideoEditorSDK
+import BanubaUtilities
+import Foundation
 
 public class ExpoBanubaReactDelegateHandler: ExpoReactDelegateHandler, MusicEditorExternalViewControllerFactory {
     var audioBrowserModule: AudioBrowserModule?
@@ -12,21 +14,19 @@ public class ExpoBanubaReactDelegateHandler: ExpoReactDelegateHandler, MusicEdit
         audioBrowserModule?.selectAudio(selectedAudio: selectedAudio)
     }
 
-    // Audio Browser selection view controller
-    public func makeTrackSelectionViewController(selectedAudioItem: AudioItem?) -> TrackSelectionViewController? {
+    public func makeTrackSelectionViewController(selectedAudioItem: AudioItem?, isAudioPartSelectionEnabled: Bool) -> TrackSelectionViewController? {
       let module = AudioBrowserModule(nibName: nil, bundle: nil)
-
       audioBrowserModule = module
       return module
     }
 
     // Effects selection view controller. Used at Music editor screen
-    public func makeEffectSelectionViewController(selectedAudioItem: BanubaUtilities.AudioItem?) -> BanubaUtilities.EffectSelectionViewController? {
+    public func makeEffectSelectionViewController(selectedAudioItem: AudioItem?) -> EffectSelectionViewController? {
       return nil
     }
 
     // Returns recorder countdown view for voice recorder screen
-    public func makeRecorderCountdownAnimatableView() -> BanubaVideoEditorSDK.MusicEditorCountdownAnimatableView? {
+    public func makeRecorderCountdownAnimatableView() -> MusicEditorCountdownAnimatableView? {
       return nil
     }
 }

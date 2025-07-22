@@ -36,7 +36,7 @@ public class ExpoBanubaModule: Module {
     }
 }
 
-class ExpoBanubaDelegate: ExpoView, BanubaVideoEditorDelegate {
+class ExpoBanubaDelegate: NSObject, BanubaVideoEditorDelegate {
     // MARK: - VideoEditorSDK
     private var videoEditorModule: VideoEditorModule?
     

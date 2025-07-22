@@ -12,21 +12,10 @@ Pod::Spec.new do |s|
   s.homepage       = package['homepage']
   s.platform       = :ios, '14.0'
   s.swift_version  = '5.4'
-  s.source         = { git: 'https://github.com/EduSantosBrito/expo-banuba' }
+  s.source         = { git: 'https://github.com/collyge/banuba-expo' }
   s.static_framework = true
 
-  s.dependency 'ExpoModulesCore'
-  
-  sdk_version = '1.45.1'
-
-  pod 'BanubaVideoEditorSDK', sdk_version
-  pod 'BanubaSDKSimple', sdk_version
-  pod 'BanubaSDK', sdk_version
-  pod 'BanubaARCloudSDK', sdk_version      # optional
-  pod 'BanubaAudioBrowserSDK', sdk_version # optional
-
-  # Photo Editor
-  pod 'BanubaPhotoEditorSDK', '1.2.9'
+  s.source_files = "**/*.{h,m,swift}"
 
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
@@ -34,5 +23,15 @@ Pod::Spec.new do |s|
     'SWIFT_COMPILATION_MODE' => 'wholemodule'
   }
 
-  s.source_files = "**/*.{h,m,swift}"
+  # Dependencies
+  s.dependency 'ExpoModulesCore'
+
+  sdk_version = '1.45.1'
+  s.dependency 'BanubaVideoEditorSDK', sdk_version
+  s.dependency 'BanubaSDKSimple', sdk_version
+  s.dependency 'BanubaSDK', sdk_version
+  s.dependency 'BanubaARCloudSDK', sdk_version      # optional
+  s.dependency 'BanubaAudioBrowserSDK', sdk_version # optional
+
+  s.dependency 'BanubaPhotoEditorSDK', '1.2.9'
 end

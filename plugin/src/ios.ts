@@ -45,8 +45,8 @@ const withSource = (config: ExpoConfig): ExpoConfig => {
             tag,
             src: contents,
             newSrc: newContent,
-            anchor: "flipper_config = FlipperConfiguration.disabled",
-            offset: 0,
+            anchor: new RegExp(/^platform :ios/),
+            offset: -1,
             comment: "#",
           });
           writeFileSync(podfile, mergedSource.contents);

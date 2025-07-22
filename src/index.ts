@@ -1,39 +1,120 @@
-import { Platform } from "react-native";
+import { NativeModules, Platform } from "react-native";
+import type { FeaturesConfig } from "./FeaturesConfig";
+import type { ExportData } from "./ExportData";
 
-import ExpoBanubaModule from "./ExpoBanubaModule";
+export * from "./FeaturesConfig";
+export * from "./ExportData";
 
-type ExportedVideo = {
-  thumbnail: string;
-  video: string;
-};
+const LINKING_ERROR =
+	`The package 'video-editor-react-native' doesn't seem to be linked. Make sure: \n\n` +
+	Platform.select({ ios: "- You have run 'pod install'\n", default: "" }) +
+	"- You rebuilt the app after installing the package\n" +
+	"- You are not using Expo Go\n";
 
-export async function initVideoEditor(
-  licenseKey: string,
-  giphyApiKey: string,
-): Promise<null | ExportedVideo> {
-  if (Platform.OS === "ios") {
-    const response = await ExpoBanubaModule.initVideoEditor(
-      licenseKey,
-      giphyApiKey,
-    );
-    return JSON.parse(response) as ExportedVideo;
-  }
+const VideoEditorModule = NativeModules.VideoEditorModule
+	? NativeModules.VideoEditorModule
+	: new Proxy(
+			{},
+			{
+				get() {
+					throw new Error(LINKING_ERROR);
+				},
+			}
+	  );
 
-  return await ExpoBanubaModule.initVideoEditor(licenseKey);
+export async function openFromCamera(
+	licenseToken: String,
+	featuresConfig: FeaturesConfig,
+	exportData?: ExportData | null
+): Promise<Map<String, String>> {
+	const inputParams = {
+		screen: "camera",
+		featuresConfig: JSON.stringify(featuresConfig),
+		exportData: JSON.stringify(exportData),
+	};
+	return Platform.OS === "ios"
+		? NativeModules.VideoEditorReactNative.openVideoEditor(
+				licenseToken,
+				inputParams
+		  )
+		: VideoEditorModule.openVideoEditor(licenseToken, inputParams);
 }
 
-export async function openVideoEditor(): Promise<void> {
-  return ExpoBanubaModule.openVideoEditor();
+export async function openFromPip(
+	licenseToken: String,
+	featuresConfig: FeaturesConfig,
+	pipVideo: String,
+	exportData?: ExportData | null
+): Promise<Map<String, String>> {
+	const inputParams = {
+		screen: "pip",
+		featuresConfig: JSON.stringify(featuresConfig),
+		videoSources: [pipVideo],
+		exportData: JSON.stringify(exportData),
+	};
+	return Platform.OS === "ios"
+		? NativeModules.VideoEditorReactNative.openVideoEditor(
+				licenseToken,
+				inputParams
+		  )
+		: VideoEditorModule.openVideoEditor(licenseToken, inputParams);
 }
 
-export async function closeAudioBrowser(): Promise<void> {
-  return ExpoBanubaModule.closeAudioBrowser();
+export async function openFromTrimmer(
+	licenseToken: String,
+	featuresConfig: FeaturesConfig,
+	videoSourcesArray: Array<String>,
+	exportData?: ExportData | null
+): Promise<Map<String, String>> {
+	if (featuresConfig.enableEditorV2 === true) {
+		console.log("Editor V2 is not available from Trimmer screen");
+	}
+	const inputParams = {
+		screen: "trimmer",
+		featuresConfig: JSON.stringify(featuresConfig),
+		exportData: JSON.stringify(exportData),
+		videoSources: videoSourcesArray,
+	};
+	return Platform.OS === "ios"
+		? NativeModules.VideoEditorReactNative.openVideoEditor(
+				licenseToken,
+				inputParams
+		  )
+		: VideoEditorModule.openVideoEditor(licenseToken, inputParams);
 }
 
-export async function selectAudio(
-  audioURL: string,
-  musicName: string,
-  artistName: string,
-): Promise<void> {
-  return ExpoBanubaModule.selectAudio(audioURL, musicName, artistName);
+export async function openFromAiClipping(
+	licenseToken: String,
+	featuresConfig: FeaturesConfig,
+	exportData?: ExportData | null
+): Promise<Map<String, String>> {
+	const inputParams = {
+		screen: "aiClipping",
+		featuresConfig: JSON.stringify(featuresConfig),
+		exportData: JSON.stringify(exportData),
+	};
+	return Platform.OS === "ios"
+		? NativeModules.VideoEditorReactNative.openVideoEditor(
+				licenseToken,
+				inputParams
+		  )
+		: VideoEditorModule.openVideoEditor(licenseToken, inputParams);
+}
+
+export async function openFromTemplates(
+	licenseToken: String,
+	featuresConfig: FeaturesConfig,
+	exportData?: ExportData | null
+): Promise<Map<String, String>> {
+	const inputParams = {
+		screen: "templates",
+		featuresConfig: JSON.stringify(featuresConfig),
+		exportData: JSON.stringify(exportData),
+	};
+	return Platform.OS === "ios"
+		? NativeModules.VideoEditorReactNative.openVideoEditor(
+				licenseToken,
+				inputParams
+		  )
+		: VideoEditorModule.openVideoEditor(licenseToken, inputParams);
 }
