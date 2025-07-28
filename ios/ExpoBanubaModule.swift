@@ -1,10 +1,33 @@
+import ExpoModulesCore
 import UIKit
 import AVKit
 import BanubaAudioBrowserSDK
 import React
 import BanubaVideoEditorSDK
 import BanubaVideoEditorCore
-import AVKit
+
+typealias TimerOptionConfiguration = TimerConfiguration.TimerOptionConfiguration
+
+public class ExpoBanubaModule: Module {
+    
+    public func definition() -> ModuleDefinition {
+        Name("ExpoBanuba")
+        
+        AsyncFunction("openVideoEditor") { (token: String, inputParams: [String: Any], promise: Promise) in
+            let rnEditor = VideoEditorReactNative()
+            rnEditor.openVideoEditor(
+                token,
+                _inputParams: inputParams as NSDictionary,
+                { result in
+                    promise.resolve(result)
+                },
+                { code, message, error in
+                    promise.reject(code ?? "unknown", message ?? "unknown error")
+                }
+            )
+        }.runOnQueue(.main)
+    }
+}
 
 @objc(VideoEditorReactNative)
 class VideoEditorReactNative: NSObject {
@@ -21,7 +44,6 @@ class VideoEditorReactNative: NSObject {
         }
         
         let featuresConfig = parseFeatureConfig(args[VideoEditorReactNative.inputParamFeaturesConfig] as? String)
-
         let exportData = parseExportData(args[VideoEditorReactNative.inputParamExportData] as? String)
         
         if (!videoEditor.initVideoEditor(token: token, featuresConfig: featuresConfig, exportData: exportData)) {
@@ -32,7 +54,7 @@ class VideoEditorReactNative: NSObject {
         
         guard let screen = args[VideoEditorReactNative.inputParamScreen] as? String else {
             debugPrint("# Screen is not set")
-            reject(VideoEditorReactNative.errInvalidParams,  VideoEditorReactNative.errMessageMissingScreen, nil)
+            reject(VideoEditorReactNative.errInvalidParams, VideoEditorReactNative.errMessageMissingScreen, nil)
             return
         }
         
@@ -40,7 +62,6 @@ class VideoEditorReactNative: NSObject {
             reject(VideoEditorReactNative.errMissingHost, VideoEditorReactNative.errMessageMissingHost, nil)
             return
         }
-        
         
         switch screen {
         case VideoEditorReactNative.screenCamera:
@@ -61,7 +82,6 @@ class VideoEditorReactNative: NSObject {
                 return
             }
             let videoURLs = videoSources!.compactMap { URL(string: $0) }
-            
             videoEditor.openVideoEditorTrimmer(fromViewController: controller, videoSources: videoURLs, resolve, reject)
 
         case VideoEditorReactNative.screenAiClipping:
@@ -75,6 +95,5 @@ class VideoEditorReactNative: NSObject {
             reject(VideoEditorReactNative.errInvalidParams, VideoEditorReactNative.errInvalidParams, nil)
             return
         }
-    
     }
 }
